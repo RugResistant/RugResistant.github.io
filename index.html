@@ -230,23 +230,13 @@
 
         let cycleEndTime = null;
 
-        // Set countdown to 6 AM EDT tomorrow
+        // Set countdown to 6 AM EDT on April 21, 2025
         function initializeCountdown() {
             const countdownElement = document.getElementById('countdown');
 
-            // Calculate 6 AM EDT tomorrow (April 21, 2025)
-            const now = new Date();
-            const tomorrow = new Date(now);
-            tomorrow.setDate(now.getDate() + 1);
-
-            // Set to 6 AM EDT (UTC-4, so 6 AM EDT = 10 AM UTC)
-            const tomorrow6AMUTC = new Date(Date.UTC(
-                tomorrow.getUTCFullYear(),
-                tomorrow.getUTCMonth(),
-                tomorrow.getUTCDate(),
-                10, 0, 0 // 6 AM EDT = 10 AM UTC
-            ));
-            cycleEndTime = tomorrow6AMUTC.getTime();
+            // Hardcode target to April 21, 2025, 6 AM EDT (UTC-4, so 10 AM UTC)
+            const target6AMUTC = new Date(Date.UTC(2025, 3, 21, 10, 0, 0)); // April 21, 2025, 10:00:00 UTC
+            cycleEndTime = target6AMUTC.getTime();
 
             updateCountdown();
         }
