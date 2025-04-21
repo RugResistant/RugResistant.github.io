@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RRR Contest Leaderboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,91 +13,88 @@
         }
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #e0e0e0;
+            background: #121212;
+            color: #E0E0E0;
             min-height: 100vh;
-            padding: 40px 20px;
-            position: relative;
+            padding: 30px 15px;
             overflow-x: hidden;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             width: 100%;
         }
         h1 {
             text-align: center;
-            font-size: 2.5em;
-            font-weight: 700;
-            color: #00d4ff;
-            text-shadow: 0 0 15px rgba(0, 212, 255, 0.7);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8em;
+            color: #39FF14;
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.7);
             margin-bottom: 20px;
-            animation: glow 2s ease-in-out infinite alternate;
+            animation: pulseGlow 2s ease-in-out infinite alternate;
         }
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 10px rgba(0, 212, 255, 0.5), 0 0 20px rgba(0, 212, 255, 0.3);
-            }
-            to {
-                text-shadow: 0 0 20px rgba(0, 212, 255, 0.8), 0 0 30px rgba(0, 212, 255, 0.5);
-            }
+        @keyframes pulseGlow {
+            from { text-shadow: 0 0 5px rgba(57, 255, 20, 0.5), 0 0 10px rgba(57, 255, 20, 0.3); }
+            to { text-shadow: 0 0 15px rgba(57, 255, 20, 0.8), 0 0 25px rgba(57, 255, 20, 0.5); }
         }
         .countdown-container {
             text-align: center;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            margin-bottom: 25px;
+            background: rgba(107, 72, 255, 0.15);
             padding: 15px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
-            width: 100%;
-            max-width: 100%;
-            overflow: visible;
-            box-sizing: border-box;
+            border-radius: 12px;
+            border: 1px solid rgba(107, 72, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         .countdown {
-            font-size: 1.5em;
-            font-weight: 600;
-            color: #00d4ff;
-            line-height: 1.4;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6em;
+            color: #FF6B6B;
+            line-height: 1.5;
         }
         .countdown span {
-            color: #e0e0e0;
-            margin: 0 5px;
+            color: #E0E0E0;
+            margin: 0 6px;
         }
         .refresh-container {
             text-align: center;
             margin-bottom: 30px;
         }
         .refresh-btn {
-            background: #00d4ff;
-            color: #1a1a2e;
+            background: #6B48FF;
+            color: #E0E0E0;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 35px;
+            font-family: 'Orbitron', sans-serif;
             font-size: 1.1em;
             font-weight: 600;
-            border-radius: 25px;
+            border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-            touch-action: manipulation;
+            box-shadow: 0 0 10px rgba(107, 72, 255, 0.5);
+            animation: buttonPulse 2s infinite;
+        }
+        @keyframes buttonPulse {
+            0% { box-shadow: 0 0 10px rgba(107, 72, 255, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(107, 72, 255, 0.8); }
+            100% { box-shadow: 0 0 10px rgba(107, 72, 255, 0.5); }
         }
         .refresh-btn:hover {
-            background: #00b4d8;
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.8);
+            background: #39FF14;
+            color: #121212;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.7);
         }
         .refresh-btn:active {
-            transform: scale(0.95);
+            transform: translateY(0);
         }
         .refresh-btn.loading::after {
             content: '';
             display: inline-block;
             width: 16px;
             height: 16px;
-            border: 2px solid #1a1a2e;
-            border-top: 2px solid #e0e0e0;
+            border: 2px solid #E0E0E0;
+            border-top: 2px solid #121212;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-left: 10px;
@@ -107,96 +104,84 @@
             100% { transform: rotate(360deg); }
         }
         .leaderboards {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
         }
         .category {
-            flex: 1;
-            min-width: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(107, 72, 255, 0.3);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .category:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 20px rgba(107, 72, 255, 0.4);
         }
         .category h2 {
-            margin-top: 0;
-            color: #00d4ff;
+            font-family: 'Orbitron', sans-serif;
+            color: #39FF14;
             font-size: 1.5em;
-            font-weight: 600;
-            border-bottom: 2px solid #00d4ff;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #FF6B6B;
             padding-bottom: 5px;
         }
         .category ul {
             list-style: none;
             padding: 0;
-            margin: 10px 0;
-            max-height: 400px;
+            max-height: 350px;
             overflow-y: auto;
         }
         .category ul li {
-            padding: 10px 0;
+            padding: 12px 0;
             font-size: 1em;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             transition: background 0.3s ease;
         }
         .category ul li:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(107, 72, 255, 0.1);
         }
         .category ul li:last-child {
             border-bottom: none;
         }
-        .highlight {
-            background: rgba(0, 212, 255, 0.2);
-            font-weight: 600;
-            border-radius: 5px;
-        }
         .error-message {
-            color: #ff6b6b;
+            color: #FF6B6B;
             text-align: center;
             font-style: italic;
         }
         .info-message {
-            color: #e0e0e0;
+            color: #E0E0E0;
             text-align: center;
             font-style: italic;
+        }
+        /* Scrollbar Styling */
+        .category ul::-webkit-scrollbar {
+            width: 8px;
+        }
+        .category ul::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .category ul::-webkit-scrollbar-thumb {
+            background: #6B48FF;
+            border-radius: 4px;
         }
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             body {
                 padding: 20px 10px;
             }
-            .container {
-                padding: 0 5px;
-            }
             h1 {
-                font-size: 2em;
-                margin-bottom: 15px;
-            }
-            .countdown-container {
-                padding: 10px;
-                margin-bottom: 15px;
+                font-size: 2.2em;
             }
             .countdown {
-                font-size: 1.3em;
+                font-size: 1.4em;
             }
             .refresh-btn {
-                padding: 10px 25px;
+                padding: 10px 30px;
                 font-size: 1em;
             }
-            .leaderboards {
-                flex-direction: column;
-                gap: 15px;
-            }
             .category {
-                min-width: 100%;
                 padding: 15px;
             }
             .category h2 {
@@ -204,40 +189,27 @@
             }
             .category ul li {
                 font-size: 0.9em;
-                padding: 8px 0;
             }
         }
         @media (max-width: 480px) {
             body {
                 padding: 15px 5px;
             }
-            .container {
-                padding: 0 3px;
-            }
             h1 {
                 font-size: 1.8em;
-                margin-bottom: 10px;
-            }
-            .countdown-container {
-                padding: 8px;
-                margin-bottom: 10px;
             }
             .countdown {
-                font-size: 1.1em;
+                font-size: 1.2em;
             }
             .refresh-btn {
-                padding: 8px 20px;
+                padding: 8px 25px;
                 font-size: 0.9em;
             }
             .category {
-                padding: 10px;
-            }
-            .category h2 {
-                font-size: 1.2em;
+                padding: 12px;
             }
             .category ul li {
                 font-size: 0.85em;
-                padding: 6px 0;
             }
         }
     </style>
@@ -256,10 +228,6 @@
                 <h2>Most Transactions</h2>
                 <ul id="mostTransactionsList"><li>Loading...</li></ul>
             </div>
-            <div class="category" id="medianSolSpent">
-                <h2>Median SOL Spent</h2>
-                <ul id="medianSolSpentList"><li>Loading...</li></ul>
-            </div>
             <div class="category" id="mostSolSpent">
                 <h2>Most SOL Spent</h2>
                 <ul id="mostSolSpentList"><li>Loading...</li></ul>
@@ -274,31 +242,32 @@
             'apikey': supabaseAnonKey,
             'Authorization': `Bearer ${supabaseAnonKey}`
         };
-        const cycleId = 1;
-        const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
 
-        // Initialize countdown on page load
+        // Set countdown to 6 AM EST tomorrow
         let cycleEndTime = null;
         async function initializeCountdown() {
             const countdownElement = document.getElementById('countdown');
             try {
-                console.log('Fetching cycle state for countdown...');
-                const response = await fetch(`${supabaseUrl}/rest/v1/cycle_state?select=start_time&cycle_id=eq.${cycleId}&limit=1`, { headers });
-                console.log('cycle_state Response:', response.status, response.ok);
+                // Fetch server time from Supabase to ensure accuracy
+                console.log('Fetching server time from Supabase...');
+                const response = await fetch(`${supabaseUrl}/rest/v1/rpc/get_current_time`, { headers });
+                console.log('Server time response:', response.status, response.ok);
                 if (!response.ok) throw new Error(`Fetch failed: ${response.status} - ${await response.text()}`);
-                const data = await response.json();
-                console.log('cycle_state Data:', data);
+                const serverTimeData = await response.json();
+                console.log('Server time data:', serverTimeData);
 
-                if (!data || data.length === 0) {
-                    countdownElement.innerHTML = `<span class="error-message">Cycle data not found.</span>`;
-                    return;
-                }
+                const serverTime = new Date(serverTimeData.current_time).getTime();
 
-                const startTime = new Date(data[0].start_time).getTime();
-                cycleEndTime = startTime + THREE_DAYS_MS;
+                // Calculate 6 AM EST tomorrow
+                const now = new Date(serverTime);
+                const tomorrow = new Date(now);
+                tomorrow.setDate(now.getDate() + 1);
+                tomorrow.setHours(6, 0, 0, 0); // 6 AM EST
+                cycleEndTime = tomorrow.getTime();
+
                 updateCountdown();
             } catch (err) {
-                console.error('Error fetching cycle state:', err);
+                console.error('Error fetching server time:', err);
                 countdownElement.innerHTML = `<span class="error-message">Error loading cycle time: ${err.message}</span>`;
             }
         }
@@ -320,12 +289,11 @@
                 return;
             }
 
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const hours = Math.floor(timeLeft / (1000 * 60 * 60));
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-            countdownElement.innerHTML = `${days}d <span>:</span> ${hours.toString().padStart(2, '0')}h <span>:</span> ${minutes.toString().padStart(2, '0')}m <span>:</span> ${seconds.toString().padStart(2, '0')}s`;
+            countdownElement.innerHTML = `${hours.toString().padStart(2, '0')}h <span>:</span> ${minutes.toString().padStart(2, '0')}m <span>:</span> ${seconds.toString().padStart(2, '0')}s`;
         }
 
         // Start countdown interval
@@ -336,7 +304,6 @@
             console.log('Window loaded, fetching data...');
             await initializeCountdown();
             await fetchMostTransactions();
-            await fetchMedianSolSpent();
             await fetchMostSolSpent();
             console.log('Data fetching completed');
         };
@@ -349,7 +316,6 @@
             try {
                 await Promise.all([
                     fetchMostTransactions(),
-                    fetchMedianSolSpent(),
                     fetchMostSolSpent()
                 ]);
             } finally {
@@ -383,74 +349,12 @@
             }
         }
 
-        // Fetch Median SOL Spent (from median_balance_wallet and purchases)
-        async function fetchMedianSolSpent() {
-            console.log('Fetching Median SOL Spent...');
-            const list = document.getElementById('medianSolSpentList');
-            try {
-                // First, check the number of purchases to determine if a median is possible
-                const purchasesCountResponse = await fetch(`${supabaseUrl}/rest/v1/purchases?select=count&cycle_id=eq.${cycleId}`, { headers });
-                console.log('purchases Count Response:', purchasesCountResponse.status, purchasesCountResponse.ok);
-                if (!purchasesCountResponse.ok) throw new Error(`Fetch failed: ${purchasesCountResponse.status} - ${await purchasesCountResponse.text()}`);
-                const purchasesCountData = await purchasesCountResponse.json();
-                console.log('purchases Count Data:', purchasesCountData);
-
-                const purchaseCount = purchasesCountData.length > 0 ? purchasesCountData[0].count : 0;
-
-                if (purchaseCount === 0) {
-                    list.innerHTML = `<li class="info-message">No purchases yet. Be the first to make a purchase and set the median!</li>`;
-                    return;
-                }
-
-                if (purchaseCount % 2 === 0) {
-                    list.innerHTML = `<li class="info-message">There are currently ${purchaseCount} purchases, an even number, so no median wallet is defined. Make one more purchase to set the median!</li>`;
-                    return;
-                }
-
-                // Get the median wallet
-                const medianResponse = await fetch(`${supabaseUrl}/rest/v1/median_balance_wallet?select=wallet_address,balance&cycle_id=eq.${cycleId}&limit=1`, { headers });
-                console.log('median_balance_wallet Response:', medianResponse.status, medianResponse.ok);
-                if (!medianResponse.ok) throw new Error(`Fetch failed: ${medianResponse.status} - ${await medianResponse.text()}`);
-                const medianData = await medianResponse.json();
-                console.log('median_balance_wallet Data:', medianData);
-
-                if (!medianData || medianData.length === 0) {
-                    list.innerHTML = `<li class="info-message">Median wallet not yet calculated. Please wait for the next update.</li>`;
-                    return;
-                }
-
-                const medianWallet = medianData[0].wallet_address;
-
-                // Get all purchases to show rankings
-                const purchasesResponse = await fetch(`${supabaseUrl}/rest/v1/purchases?select=wallet_address,balance&cycle_id=eq.${cycleId}&order=balance.asc`, { headers });
-                console.log('purchases Response for median:', purchasesResponse.status, purchasesResponse.ok);
-                if (!purchasesResponse.ok) throw new Error(`Fetch failed: ${purchasesResponse.status} - ${await purchasesResponse.text()}`);
-                const purchases = await purchasesResponse.json();
-                console.log('purchases Data for median:', purchases);
-
-                if (!purchases || purchases.length === 0) {
-                    list.innerHTML = `<li class="info-message">No purchases available to display rankings.</li>`;
-                    return;
-                }
-
-                list.innerHTML = purchases
-                    .map((item, index) => {
-                        const isMedian = item.wallet_address === medianWallet;
-                        return `<li class="${isMedian ? 'highlight' : ''}">${index + 1}. ${truncateWallet(item.wallet_address)} - ${item.balance.toFixed(4)} SOL${isMedian ? ' (Median)' : ''}</li>`;
-                    })
-                    .join('');
-            } catch (err) {
-                console.error('Error in fetchMedianSolSpent:', err);
-                list.innerHTML = `<li class="error-message">Error: ${err.message}</li>`;
-            }
-        }
-
         // Fetch Most SOL Spent (from purchases)
         async function fetchMostSolSpent() {
             console.log('Fetching Most SOL Spent...');
             const list = document.getElementById('mostSolSpentList');
             try {
-                const response = await fetch(`${supabaseUrl}/rest/v1/purchases?select=wallet_address,balance&cycle_id=eq.${cycleId}&order=balance.desc`, { headers });
+                const response = await fetch(`${supabaseUrl}/rest/v1/purchases?select=wallet_address,balance&cycle_id=eq.1&order=balance.desc`, { headers });
                 console.log('purchases Response for most SOL:', response.status, response.ok);
                 if (!response.ok) throw new Error(`Fetch failed: ${response.status} - ${await response.text()}`);
                 const data = await response.json();
