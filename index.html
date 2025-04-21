@@ -13,8 +13,8 @@
         }
         body {
             font-family: 'Poppins', sans-serif;
-            background: #F3F4F6;
-            color: #1E3A8A;
+            background: #FAFAFA;
+            color: #2F4F4F;
             min-height: 100vh;
             padding: 30px 15px;
             overflow-x: hidden;
@@ -28,7 +28,7 @@
             text-align: center;
             font-size: 2.5em;
             font-weight: 700;
-            color: #1E3A8A;
+            color: #2F4F4F;
             margin-bottom: 20px;
         }
         .countdown-container {
@@ -43,11 +43,11 @@
         .countdown {
             font-size: 1.5em;
             font-weight: 600;
-            color: #D4AF37;
+            color: #008080;
             line-height: 1.5;
         }
         .countdown span {
-            color: #1E3A8A;
+            color: #2F4F4F;
             margin: 0 6px;
         }
         .refresh-container {
@@ -55,7 +55,7 @@
             margin-bottom: 30px;
         }
         .refresh-btn {
-            background: #1E3A8A;
+            background: #2F4F4F;
             color: #FFFFFF;
             border: none;
             padding: 12px 35px;
@@ -66,8 +66,8 @@
             transition: background 0.3s ease;
         }
         .refresh-btn:hover {
-            background: #D4AF37;
-            color: #1E3A8A;
+            background: #008080;
+            color: #FFFFFF;
         }
         .refresh-btn:active {
             transform: scale(0.98);
@@ -78,7 +78,7 @@
             width: 16px;
             height: 16px;
             border: 2px solid #FFFFFF;
-            border-top: 2px solid #1E3A8A;
+            border-top: 2px solid #2F4F4F;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-left: 10px;
@@ -104,11 +104,11 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .category h2 {
-            color: #1E3A8A;
+            color: #2F4F4F;
             font-size: 1.5em;
             font-weight: 600;
             margin-bottom: 15px;
-            border-bottom: 2px solid #D4AF37;
+            border-bottom: 2px solid #008080;
             padding-bottom: 5px;
         }
         .category ul {
@@ -144,10 +144,10 @@
             width: 8px;
         }
         .category ul::-webkit-scrollbar-track {
-            background: #F3F4F6;
+            background: #FAFAFA;
         }
         .category ul::-webkit-scrollbar-thumb {
-            background: #1E3A8A;
+            background: #2F4F4F;
             border-radius: 4px;
         }
         /* Mobile Responsiveness */
@@ -227,59 +227,28 @@
             'Authorization': `Bearer ${supabaseAnonKey}`
         };
         const cycleId = 1;
-        const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
 
         let cycleEndTime = null;
 
-        // Fetch start_time from Supabase and calculate countdown
-        async function initializeCountdown() {
+        // Set countdown to 6 AM EDT tomorrow
+        function initializeCountdown() {
             const countdownElement = document.getElementById('countdown');
-            try {
-                console.log('Fetching cycle state for countdown...');
-                const response = await fetch(`${supabaseUrl}/rest/v1/cycle_state?select=start_time&cycle_id=eq.${cycleId}&limit=1`, { headers });
-                console.log('cycle_state Response:', response.status, response.ok);
-                if (!response.ok) throw new Error(`Fetch failed: ${response.status} - ${await response.text()}`);
-                const data = await response.json();
-                console.log('cycle_state Data:', data);
 
-                if (!data || data.length === 0) {
-                    countdownElement.innerHTML = `<span class="error-message">Cycle data not found.</span>`;
-                    return;
-                }
+            // Calculate 6 AM EDT tomorrow (April 21, 2025)
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
 
-                // Get start time in UTC
-                const startTime = new Date(data[0].start_time).getTime();
+            // Set to 6 AM EDT (UTC-4, so 6 AM EDT = 10 AM UTC)
+            const tomorrow6AMUTC = new Date(Date.UTC(
+                tomorrow.getUTCFullYear(),
+                tomorrow.getUTCMonth(),
+                tomorrow.getUTCDate(),
+                10, 0, 0 // 6 AM EDT = 10 AM UTC
+            ));
+            cycleEndTime = tomorrow6AMUTC.getTime();
 
-                // Calculate the end of the 3-day cycle
-                const cycleEnd = startTime + THREE_DAYS_MS;
-
-                // Determine the 6 AM EDT on the day the cycle ends
-                const cycleEndDate = new Date(cycleEnd);
-                const cycleEndDateUTC = new Date(Date.UTC(
-                    cycleEndDate.getUTCFullYear(),
-                    cycleEndDate.getUTCMonth(),
-                    cycleEndDate.getUTCDate()
-                ));
-
-                // Convert 6 AM EDT to UTC (EDT is UTC-4, so 6 AM EDT = 10 AM UTC)
-                let target6AMUTC = new Date(Date.UTC(
-                    cycleEndDate.getUTCFullYear(),
-                    cycleEndDate.getUTCMonth(),
-                    cycleEndDate.getUTCDate(),
-                    10, 0, 0 // 6 AM EDT = 10 AM UTC
-                ));
-
-                // If the cycle ends before 6 AM EDT on the final day, use the next day's 6 AM EDT
-                if (cycleEnd < target6AMUTC.getTime()) {
-                    target6AMUTC.setUTCDate(target6AMUTC.getUTCDate() + 1);
-                }
-
-                cycleEndTime = target6AMUTC.getTime();
-                updateCountdown();
-            } catch (err) {
-                console.error('Error fetching cycle state:', err);
-                countdownElement.innerHTML = `<span class="error-message">Error loading cycle time: ${err.message}</span>`;
-            }
+            updateCountdown();
         }
 
         // Update countdown every second
@@ -294,10 +263,8 @@
             const timeLeft = cycleEndTime - now;
 
             if (timeLeft <= 0) {
-                countdownElement.innerHTML = `<span class="info-message">Contest has ended. A new cycle will begin shortly.</span>`;
+                countdownElement.innerHTML = `<span class="info-message">Contest has ended. Thank you for participating!</span>`;
                 clearInterval(countdownInterval);
-                // Fetch the new start_time and restart the countdown
-                setTimeout(initializeCountdown, 5000); // Wait 5 seconds before restarting
                 return;
             }
 
@@ -306,16 +273,16 @@
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-            countdownElement.innerHTML = `${days}d <span>:</span> ${hours.toString().padStart(2, '0')}h <span>:</span> ${minutes.toString().padStart(2, '0')}m <span>:</span> ${seconds.toString().padStart(2, '0')}s`;
+            countdownElement.innerHTML = `${days}d : ${hours.toString().padStart(2, '0')}h : ${minutes.toString().padStart(2, '0')}m : ${seconds.toString().padStart(2, '0')}s`;
         }
 
         // Start countdown interval
-        let countdownInterval = setInterval(updateCountdown, 1000);
+        const countdownInterval = setInterval(updateCountdown, 1000);
 
         // Fetch and display leaderboards on page load
         window.onload = async () => {
             console.log('Window loaded, fetching data...');
-            await initializeCountdown();
+            initializeCountdown();
             await fetchMostTransactions();
             await fetchMostSolSpent();
             console.log('Data fetching completed');
