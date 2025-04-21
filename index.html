@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RRR Contest Leaderboard</title>
+    <title>OTC Contest Leaderboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -71,6 +71,10 @@
         }
         .refresh-btn:active {
             transform: scale(0.98);
+        }
+        .refresh-btn:disabled {
+            background: #6B7280;
+            cursor: not-allowed;
         }
         .refresh-btn.loading::after {
             content: '';
@@ -203,7 +207,7 @@
         <div class="countdown-container">
             <div class="countdown" id="countdown">Loading cycle time...</div>
         </div>
-        <h1>RRR Contest</h1>
+        <h1>OTC Contest</h1>
         <div class="refresh-container">
             <button class="refresh-btn" onclick="refreshData()">Refresh Leaderboard</button>
         </div>
@@ -229,6 +233,7 @@
         const cycleId = 1;
 
         let cycleEndTime = null;
+        let isContestActive = true;
 
         // Set countdown to 6 AM EDT on April 21, 2025
         function initializeCountdown() {
@@ -238,12 +243,19 @@
             const target6AMUTC = new Date(Date.UTC(2025, 3, 21, 10, 0, 0)); // April 21, 2025, 10:00:00 UTC
             cycleEndTime = target6AMUTC.getTime();
 
+            // Check if contest is already over
+            const now = Date.now();
+            if (now >= cycleEndTime) {
+                isContestActive = false;
+            }
+
             updateCountdown();
         }
 
         // Update countdown every second
         function updateCountdown() {
             const countdownElement = document.getElementById('countdown');
+            const refreshBtn = document.querySelector('.refresh-btn');
             if (!cycleEndTime) {
                 countdownElement.innerHTML = `<span class="info-message">Waiting for cycle data...</span>`;
                 return;
@@ -255,6 +267,11 @@
             if (timeLeft <= 0) {
                 countdownElement.innerHTML = `<span class="info-message">Contest has ended. Thank you for participating!</span>`;
                 clearInterval(countdownInterval);
+                isContestActive = false;
+                refreshBtn.disabled = true; // Disable the refresh button
+                // Update leaderboards to show contest ended message
+                document.getElementById('mostTransactionsList').innerHTML = `<li class="info-message">Contest has ended. No further updates.</li>`;
+                document.getElementById('mostSolSpentList').innerHTML = `<li class="info-message">Contest has ended. No further updates.</li>`;
                 return;
             }
 
@@ -273,13 +290,24 @@
         window.onload = async () => {
             console.log('Window loaded, fetching data...');
             initializeCountdown();
-            await fetchMostTransactions();
-            await fetchMostSolSpent();
+            if (isContestActive) {
+                await fetchMostTransactions();
+                await fetchMostSolSpent();
+            } else {
+                document.getElementById('mostTransactionsList').innerHTML = `<li class="info-message">Contest has ended. No further updates.</li>`;
+                document.getElementById('mostSolSpentList').innerHTML = `<li class="info-message">Contest has ended. No further updates.</li>`;
+                document.querySelector('.refresh-btn').disabled = true;
+            }
             console.log('Data fetching completed');
         };
 
         // Refresh all data
         async function refreshData() {
+            if (!isContestActive) {
+                console.log('Contest has ended, no further data refreshes allowed.');
+                return;
+            }
+
             const refreshBtn = document.querySelector('.refresh-btn');
             refreshBtn.classList.add('loading');
             refreshBtn.disabled = true;
@@ -290,12 +318,19 @@
                 ]);
             } finally {
                 refreshBtn.classList.remove('loading');
-                refreshBtn.disabled = false;
+                if (isContestActive) {
+                    refreshBtn.disabled = false;
+                }
             }
         }
 
         // Fetch Most Transactions (from wallet_transaction_counts)
         async function fetchMostTransactions() {
+            if (!isContestActive) {
+                console.log('Contest has ended, skipping fetch for Most Transactions.');
+                return;
+            }
+
             console.log('Fetching Most Transactions...');
             const list = document.getElementById('mostTransactionsList');
             try {
@@ -321,6 +356,11 @@
 
         // Fetch Most SOL Spent (from purchases)
         async function fetchMostSolSpent() {
+            if (!isContestActive) {
+                console.log('Contest has ended, skipping fetch for Most SOL Spent.');
+                return;
+            }
+
             console.log('Fetching Most SOL Spent...');
             const list = document.getElementById('mostSolSpentList');
             try {
